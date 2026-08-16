@@ -1,0 +1,10 @@
+---
+description: Python SDK coding standards
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Python
+
+- Type hints on public functions. pytest for tests. ruff for format and lint.
+- Prefer uv; keep Poetry lockfile in sync when dependencies change.
