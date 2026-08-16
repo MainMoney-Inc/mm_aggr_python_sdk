@@ -1,12 +1,20 @@
 """MainMoney aggregator Python SDK."""
 
+from mm_aggr.client import Client
+from mm_aggr.exceptions import (
+    AggregatorException,
+    ApiException,
+    AuthenticationException,
+    WebhookSignatureException,
+)
+
 __version__ = "0.1.0"
 
-
-class Client:
-    def __init__(self, base_uri: str, api_key: str) -> None:
-        self.base_uri = base_uri
-        self.api_key = api_key
-
-
-__all__ = ["Client", "__version__"]
+__all__ = [
+    "AggregatorException",
+    "ApiException",
+    "AuthenticationException",
+    "Client",
+    "WebhookSignatureException",
+    "__version__",
+]

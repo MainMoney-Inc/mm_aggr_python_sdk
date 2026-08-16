@@ -21,7 +21,23 @@ uv sync --all-extras
 # or: poetry install
 uv run pytest
 uv run mypy src
+uv run ruff check .
+uv run ruff format --check .
 ```
+
+## PyPI
+
+The package name is `mm-aggr`. First publish is a one-time project create on
+[PyPI](https://pypi.org/project/mm-aggr/) (Trusted Publisher to this GitHub
+repo, or an API token). After that, release with:
+
+```bash
+uv build
+uv publish
+```
+
+Release by pushing an annotated tag (`v0.1.0`, then semver). Do not commit
+PyPI tokens.
 
 ## Branches and commits
 

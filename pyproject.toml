@@ -6,7 +6,24 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "SEE LICENSE IN LICENSE" }
 authors = [{ name = "MainMoney SARL" }]
+keywords = ["mainmoney", "payments", "merchant", "sdk"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: Other/Proprietary License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+]
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
+Issues = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk/issues"
+Source = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
 
 [project.optional-dependencies]
 dev = [
@@ -29,6 +46,9 @@ description = "Python SDK for the MainMoney aggregator merchant API"
 authors = ["MainMoney SARL"]
 license = "LicenseRef-PolyForm-Noncommercial-1.0.0"
 readme = "README.md"
+homepage = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
+repository = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
+keywords = ["mainmoney", "payments", "merchant", "sdk"]
 packages = [{ include = "mm_aggr", from = "src" }]
 
 [tool.poetry.dependencies]
@@ -45,3 +65,26 @@ dev-dependencies = [
     "mypy>=1.11.0",
     "ruff>=0.6.0",
 ]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["src", "tests"]
+extend-exclude = ["dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["mm_aggr"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["mm_aggr"]
+mypy_path = "src"
+explicit_package_bases = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]

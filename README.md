@@ -32,19 +32,51 @@ With Poetry:
 poetry add mm-aggr
 ```
 
+Until the package is on PyPI, install from GitHub:
+
+```bash
+pip install git+https://github.com/MainMoney-Inc/mm_aggr_python_sdk.git
+```
+
 ## Quick start
 
 ```python
+import os
+
 from mm_aggr import Client
 
 client = Client(
-    base_uri="https://your-aggregator.example/api/v1/",
-    api_key="your-api-key",
+    client_id=os.environ["MM_CLIENT_ID"],
+    secret=os.environ["MM_API_SECRET"],
+    test=True,  # https://testaggregator.mainmoney.net — omit for production
+)
+
+deposit = client.deposits.create(
+    {
+        "provider_code": "VODACOM_MPESA_COD",
+        "reference": "ORDER-123",
+        "amount": "100.00",
+        "currency": "USD",
+        "customer_phone": "243820000000",
+    },
+    idempotency_key="ORDER-123",
 )
 ```
 
-See merchant API docs at `/api/v1/docs/merchants/` on your aggregator host.
-Payment methods will be added in a later release.
+Defaults: production `https://aggregator.mainmoney.net/api/v1/`, test
+`https://testaggregator.mainmoney.net/api/v1/`. Pass `base_uri` only to override.
+Configure credentials from your environment. Merchant API docs:
+`/api/v1/docs/merchants/` on the aggregator host.
+
+Exchange `client_id` and `secret` for a Bearer access token is handled by the
+SDK. There is no `X-API-KEY` header. Reuse the same `reference` and optional
+`Idempotency-Key` when retrying a create. Amounts are decimal strings; do not
+mix currencies.
+
+Verify inbound webhooks with
+`client.webhooks.verify(raw_body, signature, secret)`.
+
+Do not send merchant API keys to the browser.
 
 ## License
 
