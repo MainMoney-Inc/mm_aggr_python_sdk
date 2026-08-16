@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from mm_aggr.auth.token_store import TokenStore
 from mm_aggr.http.http_client import HttpClient
+from mm_aggr.http.requests_client import RequestsHttpClient
 from mm_aggr.http.transport import Transport
-from mm_aggr.http.urllib_client import UrllibHttpClient
 from mm_aggr.resources.amount_limits import AmountLimits
+from mm_aggr.resources.checkout_preferences import CheckoutPreferences
 from mm_aggr.resources.countries import Countries
 from mm_aggr.resources.customers import Customers
 from mm_aggr.resources.deposits import Deposits
@@ -39,7 +40,7 @@ class Client:
         self._base_uri = self.normalize_base_uri(
             base_uri if base_uri is not None else (self.TEST_BASE_URI if test else self.PRODUCTION_BASE_URI)
         )
-        http = http_client if http_client is not None else UrllibHttpClient(timeout)
+        http = http_client if http_client is not None else RequestsHttpClient(timeout)
         tokens = TokenStore(http, self._base_uri, client_id, secret, token_expires_in)
         transport = Transport(http, self._base_uri, tokens)
 
@@ -55,6 +56,7 @@ class Client:
         self.providers = Providers(transport)
         self.fees = Fees(transport)
         self.amount_limits = AmountLimits(transport)
+        self.checkout_preferences = CheckoutPreferences(transport)
         self.webhooks = WebhookVerifier()
 
     @property

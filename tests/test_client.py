@@ -256,3 +256,33 @@ def test_custom_host_without_api_prefix_is_normalized() -> None:
         http_client=MockHttpClient(),
     )
     assert client.base_uri == Client.PRODUCTION_BASE_URI
+
+
+def test_checkout_preferences_get() -> None:
+    client, mock = _client_with_mock(
+        [
+            _token_response(),
+            HttpResponse(
+                200,
+                json.dumps(
+                    {
+                        "success": True,
+                        "response_data": {
+                            "primary_color": "#ff3366",
+                            "secondary_color": "#5f5e5e",
+                            "accent_color": "#b90040",
+                            "background_color": "#f8f9fb",
+                            "locale": "en",
+                            "logo": None,
+                        },
+                        "message": "ok",
+                    }
+                ),
+            ),
+        ]
+    )
+
+    prefs = client.checkout_preferences.get()
+    assert prefs["primary_color"] == "#ff3366"
+    assert prefs["locale"] == "en"
+    assert "/manage/general/checkout-preferences/" in mock.history[1]["uri"]
