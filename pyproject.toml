@@ -18,7 +18,9 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+    "requests>=2.32.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
@@ -30,6 +32,7 @@ dev = [
     "pytest>=8.0.0",
     "mypy>=1.11.0",
     "ruff>=0.6.0",
+    "types-requests>=2.32.0",
 ]
 
 [build-system]
@@ -53,17 +56,20 @@ packages = [{ include = "mm_aggr", from = "src" }]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<4.0"
+requests = ">=2.32.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.0.0"
 mypy = ">=1.11.0"
 ruff = ">=0.6.0"
+types-requests = ">=2.32.0"
 
 [tool.uv]
 dev-dependencies = [
     "pytest>=8.0.0",
     "mypy>=1.11.0",
     "ruff>=0.6.0",
+    "types-requests>=2.32.0",
 ]
 
 [tool.ruff]
