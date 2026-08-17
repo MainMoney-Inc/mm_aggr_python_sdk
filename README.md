@@ -84,4 +84,10 @@ Copyright (c) 2026 MainMoney SARL. Licensed under the PolyForm Noncommercial
 License 1.0.0. Non-commercial use is allowed. Commercial use requires
 permission from MainMoney SARL. See [LICENSE](LICENSE).
 
+## Examples
+
+Runnable mini-shops live in [examples/](examples/). Each folder has its own
+README (Django REST Framework, FastAPI, Flask). Pair them with a
+[JS/TS frontend example](https://github.com/MainMoney-Inc/mm_aggr_js_sdk/tree/main/examples).
+
 Want to contribute? See [CONTRIBUTING.md](CONTRIBUTING.md).

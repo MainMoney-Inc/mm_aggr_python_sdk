@@ -1,0 +1,18 @@
+[project]
+name = "mm-aggr-example-fastapi"
+version = "0.1.0"
+description = "FastAPI mini-shop example for the MainMoney Python SDK"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "sqlalchemy>=2.0",
+    "python-dotenv>=1.0",
+    "mm-aggr",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+mm-aggr = { git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git" }

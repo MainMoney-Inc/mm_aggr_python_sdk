@@ -1,0 +1,18 @@
+[project]
+name = "mm-aggr-example-flask"
+version = "0.1.0"
+description = "Flask mini-shop example for the MainMoney Python SDK"
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.1",
+    "flask-cors>=5.0",
+    "sqlalchemy>=2.0",
+    "python-dotenv>=1.0",
+    "mm-aggr",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+mm-aggr = { git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git" }

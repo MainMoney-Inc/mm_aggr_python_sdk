@@ -1,0 +1,18 @@
+[project]
+name = "mm-aggr-example-django-drf"
+version = "0.1.0"
+description = "Django REST Framework mini-shop example for the MainMoney Python SDK"
+requires-python = ">=3.11"
+dependencies = [
+    "django>=5.1",
+    "djangorestframework>=3.15",
+    "django-cors-headers>=4.6",
+    "python-dotenv>=1.0",
+    "mm-aggr",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+mm-aggr = { git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git" }
