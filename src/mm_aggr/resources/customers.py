@@ -15,11 +15,17 @@ class Customers(Resource):
     def kyc(self, payload: dict[str, Any]) -> JsonValue:
         return self._transport.post("transactions/customers/kyc/", payload)
 
-    def match_provider(self, account_number: str, get_lookup: bool = False) -> JsonValue:
+    def match_provider(
+        self,
+        account_number: str,
+        get_lookup: bool = False,
+        operation_type: str | None = None,
+    ) -> JsonValue:
         return self._transport.get(
             "transactions/customers/match-provider/",
             {
                 "account_number": account_number,
                 "get_lookup": "true" if get_lookup else None,
+                "operation_type": operation_type,
             },
         )

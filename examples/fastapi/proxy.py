@@ -51,7 +51,8 @@ def _dispatch(
     if method == "GET" and route == "match-provider":
         account = str(query.get("account_number") or "")
         lookup = str(query.get("get_lookup") or "").lower() in {"1", "true", "yes"}
-        return client.customers.match_provider(account, lookup)
+        operation_type = str(query.get("operation_type") or "") or None
+        return client.customers.match_provider(account, lookup, operation_type)
     if method == "GET" and route == "amount-limits":
         return client.amount_limits.list(_scalar_query(query))
     if method == "POST" and route == "fees/simulate":
