@@ -27,17 +27,11 @@ uv run ruff format --check .
 
 ## PyPI
 
-The package name is `mm-aggr`. First publish is a one-time project create on
-[PyPI](https://pypi.org/project/mm-aggr/) (Trusted Publisher to this GitHub
-repo, or an API token). After that, release with:
-
-```bash
-uv build
-uv publish
-```
-
-Release by pushing an annotated tag (`v0.1.0`, then semver). Do not commit
-PyPI tokens.
+The distribution name is `mm-aggr-sdk` (import package `mm_aggr`). Releases are
+automated: bump `__version__` in `src/mm_aggr/__init__.py`, update `CHANGELOG.md`, then
+push an annotated tag `vX.Y.Z`. The `Publish` workflow builds and uploads to
+[PyPI](https://pypi.org/project/mm-aggr-sdk/) through Trusted Publishing (workflow
+`publish.yml`, environment `pypi`). Do not commit PyPI tokens.
 
 ## Branches and commits
 

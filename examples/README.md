@@ -1,6 +1,6 @@
 # Python SDK examples
 
-Standalone mini-shops that use the `mm-aggr` package. Each folder is its own
+Standalone mini-shops that use the `mm-aggr-sdk` package. Each folder is its own
 uv project. Start **one** backend, then point a
 [JS/TS frontend example](https://github.com/MainMoney-Inc/mm_aggr_js_sdk/tree/main/examples)
 at it with `VITE_MERCHANT_BACKEND_URL`.

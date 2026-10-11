@@ -8,11 +8,11 @@ dependencies = [
     "flask-cors>=5.0",
     "sqlalchemy>=2.0",
     "python-dotenv>=1.0",
-    "mm-aggr",
+    "mm-aggr-sdk",
 ]
 
 [tool.uv]
 package = false
 
 [tool.uv.sources]
-mm-aggr = { git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git" }
+mm-aggr-sdk = { git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git" }

@@ -241,7 +241,7 @@ wheels = [
 ]
 
 [[package]]
-name = "mm-aggr"
+name = "mm-aggr-sdk"
 version = "0.1.0"
 source = { git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git#6a79124d594176ce73e29993a0aeba1113ae985d" }
 dependencies = [
@@ -257,7 +257,7 @@ dependencies = [
     { name = "django", version = "6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "django-cors-headers" },
     { name = "djangorestframework" },
-    { name = "mm-aggr" },
+    { name = "mm-aggr-sdk" },
     { name = "python-dotenv" },
 ]
 
@@ -266,7 +266,7 @@ requires-dist = [
     { name = "django", specifier = ">=5.1" },
     { name = "django-cors-headers", specifier = ">=4.6" },
     { name = "djangorestframework", specifier = ">=3.15" },
-    { name = "mm-aggr", git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git" },
+    { name = "mm-aggr-sdk", git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git" },
     { name = "python-dotenv", specifier = ">=1.0" },
 ]
 

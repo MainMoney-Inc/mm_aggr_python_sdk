@@ -1,6 +1,6 @@
 # FastAPI mini-shop
 
-Standalone example that installs [`mm-aggr`](https://github.com/MainMoney-Inc/mm_aggr_python_sdk)
+Standalone example that installs [`mm-aggr-sdk`](https://github.com/MainMoney-Inc/mm_aggr_python_sdk)
 as a package. Same shop API as the Django and Flask examples.
 
 Default port: **8001**.
@@ -14,7 +14,7 @@ uv sync
 ./scripts/reset-db
 ```
 
-Until PyPI lists `mm-aggr`, `uv sync` installs it from GitHub (see `pyproject.toml`).
+Until PyPI lists `mm-aggr-sdk`, `uv sync` installs it from GitHub (see `pyproject.toml`).
 
 ```bash
 ./scripts/seed

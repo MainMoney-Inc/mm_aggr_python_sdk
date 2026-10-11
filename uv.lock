@@ -369,8 +369,8 @@ wheels = [
 ]
 
 [[package]]
-name = "mm-aggr"
-version = "0.1.0"
+name = "mm-aggr-sdk"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "requests" },

@@ -17,19 +17,19 @@ server. Never put merchant API keys in frontend code.
 With uv (recommended):
 
 ```bash
-uv add mm-aggr
+uv add mm-aggr-sdk
 ```
 
 With pip:
 
 ```bash
-pip install mm-aggr
+pip install mm-aggr-sdk
 ```
 
 With Poetry:
 
 ```bash
-poetry add mm-aggr
+poetry add mm-aggr-sdk
 ```
 
 Until the package is on PyPI, install from GitHub:

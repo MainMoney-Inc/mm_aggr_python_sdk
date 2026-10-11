@@ -399,7 +399,7 @@ wheels = [
 ]
 
 [[package]]
-name = "mm-aggr"
+name = "mm-aggr-sdk"
 version = "0.1.0"
 source = { git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git#6a79124d594176ce73e29993a0aeba1113ae985d" }
 dependencies = [
@@ -413,7 +413,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "flask" },
     { name = "flask-cors" },
-    { name = "mm-aggr" },
+    { name = "mm-aggr-sdk" },
     { name = "python-dotenv" },
     { name = "sqlalchemy" },
 ]
@@ -422,7 +422,7 @@ dependencies = [
 requires-dist = [
     { name = "flask", specifier = ">=3.1" },
     { name = "flask-cors", specifier = ">=5.0" },
-    { name = "mm-aggr", git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git" },
+    { name = "mm-aggr-sdk", git = "ssh://git@github.com/MainMoney-Inc/mm_aggr_python_sdk.git" },
     { name = "python-dotenv", specifier = ">=1.0" },
     { name = "sqlalchemy", specifier = ">=2.0" },
 ]

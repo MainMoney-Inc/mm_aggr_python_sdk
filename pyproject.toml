@@ -1,6 +1,6 @@
 [project]
-name = "mm-aggr"
-version = "0.1.0"
+name = "mm-aggr-sdk"
+dynamic = ["version"]
 description = "Python SDK for the MainMoney aggregator merchant API"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -10,6 +10,7 @@ keywords = ["mainmoney", "payments", "merchant", "sdk"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -24,6 +25,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
 Issues = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk/issues"
+Changelog = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk/blob/main/CHANGELOG.md"
 Source = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
 
 [project.optional-dependencies]
@@ -38,30 +40,11 @@ dev = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.version]
+path = "src/mm_aggr/__init__.py"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/mm_aggr"]
-
-[tool.poetry]
-name = "mm-aggr"
-version = "0.1.0"
-description = "Python SDK for the MainMoney aggregator merchant API"
-authors = ["MainMoney SARL"]
-license = "MIT"
-readme = "README.md"
-homepage = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
-repository = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
-keywords = ["mainmoney", "payments", "merchant", "sdk"]
-packages = [{ include = "mm_aggr", from = "src" }]
-
-[tool.poetry.dependencies]
-python = ">=3.11,<4.0"
-requests = ">=2.32.0"
-
-[tool.poetry.group.dev.dependencies]
-pytest = ">=8.0.0"
-mypy = ">=1.11.0"
-ruff = ">=0.6.0"
-types-requests = ">=2.32.0"
 
 [tool.uv]
 dev-dependencies = [
