@@ -1,5 +1,7 @@
 # MainMoney Python SDK
 
+[![PyPI](https://img.shields.io/pypi/v/mm-aggr-sdk)](https://pypi.org/project/mm-aggr-sdk/) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Python client for the MainMoney aggregator merchant API. Install this package
 in your Python application (Django, FastAPI, Flask, or scripts).
 
@@ -30,12 +32,6 @@ With Poetry:
 
 ```bash
 poetry add mm-aggr-sdk
-```
-
-Until the package is on PyPI, install from GitHub:
-
-```bash
-pip install git+https://github.com/MainMoney-Inc/mm_aggr_python_sdk.git
 ```
 
 ## Quick start
