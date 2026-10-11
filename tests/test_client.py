@@ -6,11 +6,11 @@ import json
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from tests.mock_http_client import MockHttpClient
 
 from mm_aggr import Client
 from mm_aggr.exceptions import ApiException, AuthenticationException
 from mm_aggr.http.http_response import HttpResponse
+from tests.mock_http_client import MockHttpClient
 
 
 def _client_with_mock(responses: list[HttpResponse]) -> tuple[Client, MockHttpClient]:
