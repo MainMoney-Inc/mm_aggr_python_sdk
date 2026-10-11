@@ -4,13 +4,12 @@ version = "0.1.0"
 description = "Python SDK for the MainMoney aggregator merchant API"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "SEE LICENSE IN LICENSE" }
+license = "MIT"
 authors = [{ name = "MainMoney SARL" }]
 keywords = ["mainmoney", "payments", "merchant", "sdk"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: Other/Proprietary License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -47,7 +46,7 @@ name = "mm-aggr"
 version = "0.1.0"
 description = "Python SDK for the MainMoney aggregator merchant API"
 authors = ["MainMoney SARL"]
-license = "LicenseRef-PolyForm-Noncommercial-1.0.0"
+license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
 repository = "https://github.com/MainMoney-Inc/mm_aggr_python_sdk"
