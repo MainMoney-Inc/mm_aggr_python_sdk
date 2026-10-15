@@ -3,6 +3,7 @@ name = "mm-aggr-sdk"
 dynamic = ["version"]
 description = "Python SDK for the MainMoney aggregator merchant API"
 readme = "README.md"
+version = "0.1.0"
 requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "MainMoney SARL" }]
