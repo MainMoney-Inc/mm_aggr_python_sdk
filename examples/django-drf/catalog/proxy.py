@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+import hashlib
 from typing import Any
 
 from catalog.client import get_client
 from catalog.models import Order, Transfer
 from catalog.sessions import CheckoutSession
+
+
+def idempotency_key(session: CheckoutSession) -> str:
+    """One key per checkout session: a refreshed page is a new attempt, a double submit replays the first answer."""
+    return "mm-" + hashlib.sha256(session.token.encode()).hexdigest()[:32]
 
 
 def handle_proxy(
@@ -64,7 +70,7 @@ def _dispatch(
         payload["reference"] = session.reference
         if session.lock_amount and session.amount is not None:
             payload["amount"] = session.amount
-        result = client.deposits.create(payload, session.reference)
+        result = client.deposits.create(payload, idempotency_key(session))
         _mark_order(session, "pending")
         return result
     if method == "POST" and route == "payouts":
