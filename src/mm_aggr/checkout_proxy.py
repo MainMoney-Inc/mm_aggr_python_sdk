@@ -11,11 +11,14 @@ Security: ``deposits``/``payouts`` bodies come from the browser. ``payment_curre
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Mapping
 from typing import Any
 
 from mm_aggr.client import Client
 from mm_aggr.exceptions import AggregatorException, ApiException
+
+logger = logging.getLogger(__name__)
 
 #: ``(HTTP method, route)`` pairs handled by :func:`dispatch` (routes have no leading/trailing slash).
 CHECKOUT_ROUTES: tuple[tuple[str, str], ...] = (
@@ -103,8 +106,10 @@ def handle(
     except ApiException as exc:
         status = int(getattr(exc, "status_code", 400) or 400)
         return (status if status >= 400 else 400), {"message": str(exc), "errors": getattr(exc, "errors", {})}
-    except AggregatorException as exc:
-        return 400, {"message": str(exc)}
+    except AggregatorException:
+        # Transport/auth failures can carry internals (hosts, URLs); log them, return a safe message.
+        logger.exception("Merchant backend request failed")
+        return 400, {"message": "Merchant backend request failed"}
     except ValueError:
         return 404, {"message": "Unknown merchant backend path"}
 

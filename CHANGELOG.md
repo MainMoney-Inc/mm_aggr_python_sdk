@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.1.4
+
+- Security: `checkout_proxy.handle` logs transport/auth failures and returns a generic message instead of the raw exception text; API validation messages are unchanged.
+- Security: examples no longer run Flask in debug mode by default (`FLASK_DEBUG=1` opts in).
+- Security: locks updated (urllib3 2.8.0, certifi 2026.10.23, Werkzeug, Django, DRF).
+- Workflows declare least-privilege `permissions: contents: read` (CodeQL).
+
 ## 0.1.3
 
 - `mm_aggr.checkout_proxy` (`dispatch`, `handle`, `CHECKOUT_ROUTES`): framework-neutral proxy for every route the JS SDK calls

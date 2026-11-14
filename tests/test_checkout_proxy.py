@@ -12,6 +12,7 @@ import pytest
 
 from mm_aggr import Client
 from mm_aggr.checkout_proxy import CHECKOUT_ROUTES, dispatch, handle
+from mm_aggr.exceptions import AuthenticationException
 from mm_aggr.http.http_response import HttpResponse
 from tests.mock_http_client import MockHttpClient
 
@@ -116,6 +117,15 @@ def test_handle_maps_api_errors() -> None:
     status, payload = handle(client, "POST", "deposits", body={})
     assert status == 400
     assert "message" in payload
+
+
+def test_handle_hides_internal_error_details(monkeypatch: pytest.MonkeyPatch) -> None:
+    def boom(*_args: Any, **_kwargs: Any) -> Any:
+        raise AuthenticationException("token exchange failed at https://internal.example/secret")
+
+    monkeypatch.setattr("mm_aggr.checkout_proxy.dispatch", boom)
+    client, _ = _client()
+    assert handle(client, "POST", "deposits", body={}) == (400, {"message": "Merchant backend request failed"})
 
 
 def test_python_covers_every_js_default_path() -> None:
