@@ -77,6 +77,43 @@ Verify inbound webhooks with
 
 Do not send merchant API keys to the browser.
 
+## Checkout proxy
+
+The JS checkout widget calls routes on **your** backend, which forward to the aggregator with this SDK.
+`mm_aggr.checkout_proxy` implements all of them, framework-neutral, so none gets forgotten:
+
+| Method | Route | Aggregator call |
+| --- | --- | --- |
+| GET | `/countries` | `client.countries.list()` |
+| GET | `/providers` | `client.providers.list(query)` |
+| GET | `/match-provider` | `client.customers.match_provider(...)` |
+| GET | `/amount-limits` | `client.amount_limits.list(query)` |
+| POST | `/fees/simulate` | `client.fees.simulate(body)` |
+| GET | `/checkout-preferences` | `client.checkout_preferences.get()` |
+| POST | `/deposits` | `client.deposits.create(body, idempotency_key)` |
+| POST | `/deposits/validate` | `client.deposits.validate_payment(body)` |
+| POST | `/payouts` | `client.payouts.create(body, reference)` |
+| GET | `/status` | `client.status.check(operation, reference)` |
+
+```python
+from mm_aggr.checkout_proxy import handle
+
+status, payload = handle(
+    client, request.method, route, query, body,
+    reference=order.reference,            # forced over any browser value
+    idempotency_key=session_key,          # one per checkout session
+    overrides={"amount": order.amount, "currency": order.currency},
+)
+return JsonResponse(payload, status=status)
+```
+
+`dispatch(...)` raises instead of returning a status tuple. The test suite fails if a path in the JS SDK's
+`DEFAULT_PATHS` has no Python route.
+
+**Never trust the browser for the order.** Deposit and payout bodies come from the customer's browser. Force
+`reference`, `amount` and `currency` from your own order through `reference=` and `overrides=`. `payment_currency`
+(the currency the customer pays in, chosen through a fee quote) is passed through unchanged.
+
 ## License
 
 Copyright (c) 2026 MainMoney SARL. Licensed under the MIT License. See [LICENSE](LICENSE).

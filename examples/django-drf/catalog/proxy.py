@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 from typing import Any
 
+from mm_aggr.checkout_proxy import handle
+
 from catalog.client import get_client
 from catalog.models import Order, Transfer
 from catalog.sessions import CheckoutSession
@@ -22,81 +24,42 @@ def handle_proxy(
     body: dict[str, Any],
     session: CheckoutSession,
 ) -> tuple[int, Any]:
-    try:
-        from mm_aggr.exceptions import AggregatorException, ApiException
-    except ImportError:
-        AggregatorException = Exception  # type: ignore[misc,assignment]
-        ApiException = Exception  # type: ignore[misc,assignment]
+    """Forward a widget request through the SDK's checkout proxy; the order is the source of truth."""
+    path = route.strip("/")
+    verb = method.upper()
+    overrides: dict[str, Any] = {}
+    if session.lock_amount and session.amount is not None:
+        overrides["amount"] = session.amount
+        if session.currency:
+            overrides["currency"] = session.currency
+    status, payload = handle(
+        get_client(),
+        verb,
+        path,
+        query,
+        body,
+        reference=session.reference,
+        idempotency_key=idempotency_key(session),
+        overrides=overrides,
+        operation=session.operation or "deposit",
+    )
+    if status == 200:
+        _record(verb, path, body, payload, session)
+    return status, payload
 
-    try:
-        payload = _dispatch(method.upper(), route.strip("/"), query, body, session)
-        return 200, payload
-    except ApiException as exc:
-        status = int(getattr(exc, "status_code", 400) or 400)
-        if status < 400:
-            status = 400
-        return status, {"message": str(exc), "errors": getattr(exc, "errors", {})}
-    except AggregatorException as exc:
-        return 400, {"message": str(exc)}
-    except ValueError as exc:
-        return 400, {"message": str(exc)}
 
-
-def _dispatch(
-    method: str,
-    route: str,
-    query: dict[str, Any],
-    body: dict[str, Any],
-    session: CheckoutSession,
-) -> Any:
-    client = get_client()
-    if method == "GET" and route == "countries":
-        return client.countries.list()
-    if method == "GET" and route == "providers":
-        return client.providers.list(_scalar_query(query))
-    if method == "GET" and route == "match-provider":
-        account = str(query.get("account_number") or "")
-        lookup = str(query.get("get_lookup") or "").lower() in {"1", "true", "yes"}
-        operation_type = str(query.get("operation_type") or "") or None
-        return client.customers.match_provider(account, lookup, operation_type)
-    if method == "GET" and route == "amount-limits":
-        return client.amount_limits.list(_scalar_query(query))
-    if method == "POST" and route == "fees/simulate":
-        return client.fees.simulate(body)
-    if method == "GET" and route == "checkout-preferences":
-        return client.checkout_preferences.get()
-    if method == "POST" and route == "deposits":
-        payload = dict(body)
-        payload["reference"] = session.reference
-        if session.lock_amount and session.amount is not None:
-            payload["amount"] = session.amount
-        result = client.deposits.create(payload, idempotency_key(session))
+def _record(verb: str, path: str, body: dict[str, Any], payload: Any, session: CheckoutSession) -> None:
+    if verb == "POST" and path == "deposits":
         _mark_order(session, "pending")
-        return result
-    if method == "POST" and route == "payouts":
-        payload = dict(body)
-        payload["reference"] = session.reference
-        if session.lock_amount and session.amount is not None:
-            payload["amount"] = session.amount
-        destination = str(payload.get("customer_phone") or payload.get("destination_account") or "")
-        result = client.payouts.create(payload, session.reference)
+    elif verb == "POST" and path == "payouts":
+        destination = str(body.get("customer_phone") or body.get("destination_account") or "")
         _mark_transfer(session, "pending", destination)
-        return result
-    if method == "GET" and route == "status":
-        reference = str(query.get("reference") or session.reference)
-        operation = str(query.get("operation") or session.operation or "deposit")
-        result = client.status.check(operation, reference)
-        status = _extract_status(result)
-        if operation == "payout":
+    elif verb == "GET" and path == "status":
+        status = _extract_status(payload)
+        if session.operation == "payout":
             _mark_transfer(session, status)
         else:
             _mark_order(session, status)
-        return result
-    raise ValueError("Unknown merchant backend path")
-
-
-def _scalar_query(query: dict[str, Any]) -> dict[str, Any]:
-    return {key: value for key, value in query.items() if isinstance(value, (str, int, float, bool)) or value is None}
 
 
 def _extract_status(result: Any) -> str:
