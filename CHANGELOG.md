@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.1.5
+
+- `checkout_proxy.handle` reads the API message from `ApiException.message` (new attribute) rather than `str(exc)`; behaviour unchanged.
+
 ## 0.1.4
 
 - Security: `checkout_proxy.handle` logs transport/auth failures and returns a generic message instead of the raw exception text; API validation messages are unchanged.

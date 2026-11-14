@@ -28,6 +28,8 @@ class ApiException(AggregatorException):
         response_body: Any = None,
     ) -> None:
         super().__init__(message)
+        # Text from the API's own response envelope, safe to show to end users (unlike str(exc) on other errors).
+        self.message = message
         self.status_code = status_code
         self.errors: dict[str, Any] = errors if errors is not None else {}
         self.response_body = response_body

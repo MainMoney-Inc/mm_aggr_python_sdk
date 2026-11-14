@@ -105,7 +105,7 @@ def handle(
         return 200, dispatch(client, method, route, query, body, **options)
     except ApiException as exc:
         status = int(getattr(exc, "status_code", 400) or 400)
-        return (status if status >= 400 else 400), {"message": str(exc), "errors": getattr(exc, "errors", {})}
+        return (status if status >= 400 else 400), {"message": exc.message, "errors": getattr(exc, "errors", {})}
     except AggregatorException:
         # Transport/auth failures can carry internals (hosts, URLs); log them, return a safe message.
         logger.exception("Merchant backend request failed")

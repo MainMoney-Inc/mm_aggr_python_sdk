@@ -9,7 +9,7 @@ from mm_aggr.exceptions import (
     WebhookSignatureException,
 )
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 
 __all__ = [
     "CHECKOUT_ROUTES",
