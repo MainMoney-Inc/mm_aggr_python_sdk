@@ -11,4 +11,4 @@ at it with `VITE_MERCHANT_BACKEND_URL`.
 | [fastapi](fastapi/) | 8001 | See that folder’s README |
 | [flask](flask/) | 8002 | See that folder’s README |
 
-Same app in every example: choose a product, pay (deposit), refund, transfer (payout).
+Every example forwards through `mm_aggr.checkout_proxy`. Same app in every example: choose a product, pay (deposit), refund, transfer (payout).
