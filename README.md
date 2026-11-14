@@ -99,9 +99,13 @@ The JS checkout widget calls routes on **your** backend, which forward to the ag
 from mm_aggr.checkout_proxy import handle
 
 status, payload = handle(
-    client, request.method, route, query, body,
-    reference=order.reference,            # forced over any browser value
-    idempotency_key=session_key,          # one per checkout session
+    client,
+    request.method,
+    route,
+    query,
+    body,
+    reference=order.reference,  # forced over any browser value
+    idempotency_key=session_key,  # one per checkout session
     overrides={"amount": order.amount, "currency": order.currency},
 )
 return JsonResponse(payload, status=status)
