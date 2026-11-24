@@ -20,11 +20,7 @@ class PaymentLinks(Resource):
         idempotency_key: str | None = None,
         merchant_account: str | None = None,
     ) -> JsonValue:
-        return self._transport.post(
-            "payment-links/",
-            payload,
-            {**self._idempotency_headers(idempotency_key), **self._account_headers(merchant_account)},
-        )
+        return self._transport.post("payment-links/", payload, self._headers(idempotency_key, merchant_account))
 
     def list(self, query: dict[str, Any] | None = None, merchant_account: str | None = None) -> JsonValue:
         return self._transport.get("payment-links/", query or {}, self._account_headers(merchant_account))
@@ -34,9 +30,3 @@ class PaymentLinks(Resource):
 
     def cancel(self, id: str, merchant_account: str | None = None) -> JsonValue:  # noqa: A002
         return self._transport.post(f"payment-links/{id}/cancel/", {}, self._account_headers(merchant_account))
-
-    @staticmethod
-    def _account_headers(merchant_account: str | None) -> dict[str, str]:
-        if merchant_account is None or merchant_account == "":
-            return {}
-        return {"X-Merchant-Account": merchant_account}

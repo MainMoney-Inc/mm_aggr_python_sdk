@@ -9,9 +9,10 @@ from mm_aggr.resources.resource import Resource
 
 
 class Refunds(Resource):
-    def create(self, payload: dict[str, Any], idempotency_key: str | None = None) -> JsonValue:
-        return self._transport.post(
-            "transactions/refunds/",
-            payload,
-            self._idempotency_headers(idempotency_key),
-        )
+    def create(
+        self,
+        payload: dict[str, Any],
+        idempotency_key: str | None = None,
+        merchant_account: str | None = None,
+    ) -> JsonValue:
+        return self._transport.post("transactions/refunds/", payload, self._headers(idempotency_key, merchant_account))

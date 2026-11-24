@@ -9,5 +9,7 @@ from mm_aggr.resources.resource import Resource
 
 
 class Wallets(Resource):
-    def list(self, query: dict[str, Any] | None = None) -> JsonValue:
-        return self._transport.get("manage/merchant-admin/wallets/", query or {})
+    def list(self, query: dict[str, Any] | None = None, merchant_account: str | None = None) -> JsonValue:
+        return self._transport.get(
+            "manage/merchant-admin/wallets/", query or {}, self._account_headers(merchant_account)
+        )

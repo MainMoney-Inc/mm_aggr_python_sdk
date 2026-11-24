@@ -9,9 +9,12 @@ from mm_aggr.resources.resource import Resource
 
 
 class Remittances(Resource):
-    def create(self, payload: dict[str, Any], idempotency_key: str | None = None) -> JsonValue:
+    def create(
+        self,
+        payload: dict[str, Any],
+        idempotency_key: str | None = None,
+        merchant_account: str | None = None,
+    ) -> JsonValue:
         return self._transport.post(
-            "transactions/remittances/",
-            payload,
-            self._idempotency_headers(idempotency_key),
+            "transactions/remittances/", payload, self._headers(idempotency_key, merchant_account)
         )

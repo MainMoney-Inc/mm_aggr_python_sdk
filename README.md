@@ -77,89 +77,18 @@ Verify inbound webhooks with
 
 Do not send merchant API keys to the browser.
 
-## Checkout proxy
+## Guides
 
-The JS checkout widget calls routes on **your** backend, which forward to the aggregator with this SDK.
-`mm_aggr.checkout_proxy` implements all of them, framework-neutral, so none gets forgotten:
+Detailed, per-flow guides (authentication, countries and providers, fees, deposits, payouts, remittances, refunds,
+status polling, webhooks, idempotency, payment links, MainMoney Rails sellers and transfers, wallets and reports,
+errors, browser checkout proxy) are in [docs/](docs/README.md).
 
-| Method | Route | Aggregator call |
-| --- | --- | --- |
-| GET | `/countries` | `client.countries.list()` |
-| GET | `/providers` | `client.providers.list(query)` |
-| GET | `/match-provider` | `client.customers.match_provider(...)` |
-| GET | `/amount-limits` | `client.amount_limits.list(query)` |
-| POST | `/fees/simulate` | `client.fees.simulate(body)` |
-| GET | `/checkout-preferences` | `client.checkout_preferences.get()` |
-| POST | `/deposits` | `client.deposits.create(body, idempotency_key)` |
-| POST | `/deposits/validate` | `client.deposits.validate_payment(body)` |
-| POST | `/payouts` | `client.payouts.create(body, reference)` |
-| GET | `/status` | `client.status.check(operation, reference)` |
-
-```python
-from mm_aggr.checkout_proxy import handle
-
-status, payload = handle(
-    client,
-    request.method,
-    route,
-    query,
-    body,
-    reference=order.reference,  # forced over any browser value
-    idempotency_key=session_key,  # one per checkout session
-    overrides={"amount": order.amount, "currency": order.currency},
-)
-return JsonResponse(payload, status=status)
-```
-
-`dispatch(...)` raises instead of returning a status tuple. The test suite fails if a path in the JS SDK's
-`DEFAULT_PATHS` has no Python route.
-
-**Never trust the browser for the order.** Deposit and payout bodies come from the customer's browser. Force
-`reference`, `amount` and `currency` from your own order through `reference=` and `overrides=`. `payment_currency`
-(the currency the customer pays in, chosen through a fee quote) is passed through unchanged.
-
-## Payment links
-
-A payment link is a hosted payment page for one amount. You create it, give the returned `url` to your customer
-(email, chat, QR code), and the customer pays there with card or mobile money; no checkout code on your side.
-The API key needs the `PAYMENT_LINK` scope.
-
-```python
-link = client.payment_links.create(
-    {
-        "reference": "INV-2026-001",  # your unique reference, max 100 chars
-        "amount": "25.00",
-        "currency": "USD",
-        "title": "Invoice 2026-001",
-        "description": "Consulting, March",
-        "methods": ["card", "mobile_money"],  # empty or omitted: every method available to you
-        "expires_at": "2026-12-31T23:59:59Z",  # optional; the link stops accepting payments after this
-        "single_use": True,  # default: closes after the first successful payment
-        "redirect_url": "https://shop.example.com/thanks",  # where the customer lands after paying
-        "customer_name": "Jane Doe",
-        "customer_email": "jane@example.com",
-        "customer_phone": "243820000000",
-        "metadata": {"order_id": 42},
-    },
-    idempotency_key="INV-2026-001",
-)
-print(link["url"])  # public URL the customer pays at
-
-page = client.payment_links.list({"status": "ACTIVE"})  # status: ACTIVE, PAID, EXPIRED, CANCELLED; newest first
-link = client.payment_links.get(link["id"])
-link = client.payment_links.cancel(link["id"])  # only active links; a paid link cannot be cancelled
-```
-
-- Only `reference`, `amount` and `currency` are required. The amount is a decimal string and is fixed by you; the
-  customer cannot change it.
-- `status` is `ACTIVE`, `PAID`, `EXPIRED` or `CANCELLED`; `paid_at` is set once paid.
-- Errors raise `ApiException`: `400` for invalid input, `409` when the request conflicts with the link's state (for
-  example cancelling a link that is already paid). Read `exc.status_code` and `exc.message`.
-- **On behalf of a seller (MainMoney Rails):** pass `merchant_account="<seller account id>"` to any payment link
-  method. It is sent as `X-Merchant-Account`; the link is created for and attributed to that seller (`account_id`),
-  and the API answers `403` when the seller is unknown, not yours or not active.
-- **Knowing it was paid:** poll `client.payment_links.get(id)` until `status` is `PAID`, and verify any webhook with
-  `client.webhooks.verify(...)` before trusting it. Reconcile on your own `reference`.
+- Browser checkout widget: your backend forwards its calls with `mm_aggr.checkout_proxy`
+  ([docs/checkout-proxy.md](docs/checkout-proxy.md)).
+- Payment links: `client.payment_links.create(...)` returns the `url` to give your customer
+  ([docs/payment-links.md](docs/payment-links.md)).
+- Platforms acting for sellers: `Client(..., merchant_account="<seller id>")` or
+  `client.with_merchant_account(id)` ([docs/mainmoney-rails.md](docs/mainmoney-rails.md)).
 
 ## License
 

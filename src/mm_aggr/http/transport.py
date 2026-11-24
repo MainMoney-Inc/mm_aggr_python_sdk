@@ -27,6 +27,17 @@ class Transport:
     ) -> JsonValue:
         return self._request("POST", path, body if body is not None else {}, {}, headers or {})
 
+    def patch(
+        self,
+        path: str,
+        body: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> JsonValue:
+        return self._request("PATCH", path, body if body is not None else {}, {}, headers or {})
+
+    def delete(self, path: str, headers: dict[str, str] | None = None) -> JsonValue:
+        return self._request("DELETE", path, None, {}, headers or {})
+
     def get(
         self,
         path: str,
