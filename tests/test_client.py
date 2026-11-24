@@ -286,3 +286,82 @@ def test_checkout_preferences_get() -> None:
     assert prefs["primary_color"] == "#ff3366"
     assert prefs["locale"] == "en"
     assert "/manage/general/checkout-preferences/" in mock.history[1]["uri"]
+
+
+_LINK = {
+    "id": "6f1c1c1e-0000-4000-8000-000000000001",
+    "reference": "INV-1",
+    "amount": "25.00",
+    "currency": "USD",
+    "status": "ACTIVE",
+    "url": "https://pay.example.test/l/abc",
+    "account_id": None,
+}
+
+
+def test_payment_links_create_posts_payload_with_idempotency_and_account() -> None:
+    client, mock = _client_with_mock([_token_response(), HttpResponse(201, json.dumps(_LINK))])
+
+    link = client.payment_links.create(
+        {"reference": "INV-1", "amount": "25.00", "currency": "USD", "single_use": True},
+        idempotency_key="idem-1",
+        merchant_account="acct_123",
+    )
+
+    assert link["url"] == "https://pay.example.test/l/abc"
+    request = mock.history[1]
+    assert request["method"] == "POST"
+    assert request["uri"] == "https://example.test/api/v1/payment-links/"
+    assert request["options"]["json"]["reference"] == "INV-1"
+    assert request["options"]["headers"]["Idempotency-Key"] == "idem-1"
+    assert request["options"]["headers"]["X-Merchant-Account"] == "acct_123"
+    assert request["options"]["headers"]["Authorization"] == "Bearer tok_1"
+
+
+def test_payment_links_create_omits_optional_headers() -> None:
+    client, mock = _client_with_mock([_token_response(), HttpResponse(201, json.dumps(_LINK))])
+
+    client.payment_links.create({"reference": "INV-1", "amount": "25.00", "currency": "USD"})
+
+    headers = mock.history[1]["options"]["headers"]
+    assert "Idempotency-Key" not in headers
+    assert "X-Merchant-Account" not in headers
+
+
+def test_payment_links_list_get_cancel_paths() -> None:
+    page = {"count": 1, "next": None, "previous": None, "results": [_LINK]}
+    client, mock = _client_with_mock(
+        [
+            _token_response(),
+            HttpResponse(200, json.dumps(page)),
+            HttpResponse(200, json.dumps(_LINK)),
+            HttpResponse(200, json.dumps({**_LINK, "status": "CANCELLED"})),
+        ]
+    )
+
+    listing = client.payment_links.list({"status": "ACTIVE"}, merchant_account="acct_123")
+    fetched = client.payment_links.get(_LINK["id"])
+    cancelled = client.payment_links.cancel(_LINK["id"])
+
+    assert listing["count"] == 1
+    assert fetched["id"] == _LINK["id"]
+    assert cancelled["status"] == "CANCELLED"
+    assert mock.history[1]["method"] == "GET"
+    assert mock.history[1]["options"]["query"] == {"status": "ACTIVE"}
+    assert mock.history[1]["options"]["headers"]["X-Merchant-Account"] == "acct_123"
+    assert mock.history[2]["uri"] == f"https://example.test/api/v1/payment-links/{_LINK['id']}/"
+    assert "X-Merchant-Account" not in mock.history[2]["options"]["headers"]
+    assert mock.history[3]["method"] == "POST"
+    assert mock.history[3]["uri"] == f"https://example.test/api/v1/payment-links/{_LINK['id']}/cancel/"
+
+
+def test_payment_links_conflict_raises_api_exception() -> None:
+    client, _ = _client_with_mock(
+        [_token_response(), HttpResponse(409, json.dumps({"detail": "A paid link cannot be cancelled."}))]
+    )
+
+    with pytest.raises(ApiException) as caught:
+        client.payment_links.cancel(_LINK["id"])
+
+    assert caught.value.status_code == 409
+    assert caught.value.message == "A paid link cannot be cancelled."

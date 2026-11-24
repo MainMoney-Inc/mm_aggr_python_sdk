@@ -12,6 +12,7 @@ from mm_aggr.resources.countries import Countries
 from mm_aggr.resources.customers import Customers
 from mm_aggr.resources.deposits import Deposits
 from mm_aggr.resources.fees import Fees
+from mm_aggr.resources.payment_links import PaymentLinks
 from mm_aggr.resources.payouts import Payouts
 from mm_aggr.resources.providers import Providers
 from mm_aggr.resources.refunds import Refunds
@@ -48,6 +49,7 @@ class Client:
         self.payouts = Payouts(transport)
         self.remittances = Remittances(transport)
         self.refunds = Refunds(transport)
+        self.payment_links = PaymentLinks(transport)
         self.status = Status(transport)
         self.customers = Customers(transport)
         self.wallets = Wallets(transport)

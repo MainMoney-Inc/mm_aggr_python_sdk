@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.2.0
+
+- `client.payment_links` (`create`, `list`, `get`, `cancel`): hosted Payment Links API (`/payment-links/`). The
+  response carries the public `url` the customer pays at. Requires an API key with the `PAYMENT_LINK` scope.
+- Payment link methods accept `merchant_account` to send `X-Merchant-Account` and act on behalf of a seller.
+
 ## 0.1.5
 
 - `checkout_proxy.handle` reads the API message from `ApiException.message` (new attribute) rather than `str(exc)`; behaviour unchanged.

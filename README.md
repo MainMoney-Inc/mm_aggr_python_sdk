@@ -118,6 +118,49 @@ return JsonResponse(payload, status=status)
 `reference`, `amount` and `currency` from your own order through `reference=` and `overrides=`. `payment_currency`
 (the currency the customer pays in, chosen through a fee quote) is passed through unchanged.
 
+## Payment links
+
+A payment link is a hosted payment page for one amount. You create it, give the returned `url` to your customer
+(email, chat, QR code), and the customer pays there with card or mobile money; no checkout code on your side.
+The API key needs the `PAYMENT_LINK` scope.
+
+```python
+link = client.payment_links.create(
+    {
+        "reference": "INV-2026-001",  # your unique reference, max 100 chars
+        "amount": "25.00",
+        "currency": "USD",
+        "title": "Invoice 2026-001",
+        "description": "Consulting, March",
+        "methods": ["card", "mobile_money"],  # empty or omitted: every method available to you
+        "expires_at": "2026-12-31T23:59:59Z",  # optional; the link stops accepting payments after this
+        "single_use": True,  # default: closes after the first successful payment
+        "redirect_url": "https://shop.example.com/thanks",  # where the customer lands after paying
+        "customer_name": "Jane Doe",
+        "customer_email": "jane@example.com",
+        "customer_phone": "243820000000",
+        "metadata": {"order_id": 42},
+    },
+    idempotency_key="INV-2026-001",
+)
+print(link["url"])  # public URL the customer pays at
+
+page = client.payment_links.list({"status": "ACTIVE"})  # status: ACTIVE, PAID, EXPIRED, CANCELLED; newest first
+link = client.payment_links.get(link["id"])
+link = client.payment_links.cancel(link["id"])  # only active links; a paid link cannot be cancelled
+```
+
+- Only `reference`, `amount` and `currency` are required. The amount is a decimal string and is fixed by you; the
+  customer cannot change it.
+- `status` is `ACTIVE`, `PAID`, `EXPIRED` or `CANCELLED`; `paid_at` is set once paid.
+- Errors raise `ApiException`: `400` for invalid input, `409` when the request conflicts with the link's state (for
+  example cancelling a link that is already paid). Read `exc.status_code` and `exc.message`.
+- **On behalf of a seller (MainMoney Rails):** pass `merchant_account="<seller account id>"` to any payment link
+  method. It is sent as `X-Merchant-Account`; the link is created for and attributed to that seller (`account_id`),
+  and the API answers `403` when the seller is unknown, not yours or not active.
+- **Knowing it was paid:** poll `client.payment_links.get(id)` until `status` is `PAID`, and verify any webhook with
+  `client.webhooks.verify(...)` before trusting it. Reconcile on your own `reference`.
+
 ## License
 
 Copyright (c) 2026 MainMoney SARL. Licensed under the MIT License. See [LICENSE](LICENSE).
